@@ -1,0 +1,65 @@
+/*
+How would you design a stack which, in addition to push and pop has a function min which returns 
+the minimum element? Push,pop and min should all operate in O(1) time.
+The thing with min is that they don't change bery often, they only change when a smaller element is added.
+Our solution is that we kept track of the min at each stack, we would be able to easily know the min.
+We can do this by having each node record what the min beneath itself is. Then, to find the min, you just look at wahat the top elemnt thinks is the min
+When you push an element onto the stack, the element is given the current minimum. It sets its"local min" to be the min.
+*/
+public class StackWithMin extends Stack<NodeWithMin> {
+	public void push(int value) {
+		int newMin = Math.min(value, min());
+		super.push(new NodeWithMin(value, newMin));
+	}
+	public int min(){
+		if(this.isEmpty()) {
+			return Integer.MAX_VALUE;
+
+		} else {
+			return peek.min();
+		}
+	}
+}
+
+class NodeWithMin {
+	public int value;
+	public int min;
+	public NodeWithMin(int v, int min) {
+		value = v;
+		this.min = min;
+	}
+}
+// there is a issue: if we have a large stack and we waste a lot of space by keeping track of the min for every single element.
+// we can do better by using an additional stack which keeps track of the mins
+public class StackWithMin2 extends Stack<Integer> {
+	Stack<Integer> s2;
+	public StackWithMin2() {
+		s2 = new Stack<Integer>();
+	}
+
+	public void push(int value) {
+		if(value <= min()) {
+			s2.push(value);
+		}
+		super.push(value);
+	}
+	public Integer pop() {
+		int value = super.pop();
+		if (value == min()) {
+			s2.pop();
+		}
+		return value;
+	}
+	public int min() {
+		if(s2.isEmpty()) {
+			return Integer.MAX_VALUE;
+		} else {
+			return s2.peek();
+		}
+	}
+}
+
+
+
+
+
